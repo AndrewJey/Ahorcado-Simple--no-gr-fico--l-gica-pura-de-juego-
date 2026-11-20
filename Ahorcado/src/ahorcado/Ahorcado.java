@@ -1,90 +1,55 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ahorcado;
 
 import javax.swing.JOptionPane;
 
 /**
- *
- * @author UTN
+ * Interfaz interactiva de Ahorcado con manejo seguro de cancelaciones, estado claro y reinicio de partida.
  */
 public class Ahorcado {
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        char digito='.';
-        String palabraOculta;
-        int cantidadLetras, aleatorio;
-        char descompuesta[];
-        char impresion[];
-        int cont = 0;
-        int contOportunidades = 0;
-        int contDeComparacionDigitada;
-        boolean falla;
-        String algoPorCulpaDelProfe;
-        aleatorio = (int) (Math.random() * 5) + 1;
-        palabraOculta = "";
-        switch (aleatorio) {
-            case 1:
-                palabraOculta = "alado";
-                break;
-            case 2:
-                palabraOculta = "automotor";
-                break;
-            case 3:
-                palabraOculta = "herradura";
-                break;
-            case 4:
-                palabraOculta = "extravaganza";
-                break;
-            case 5:
-                palabraOculta = "caballeria";
-        }
-        cantidadLetras = palabraOculta.length();
-        descompuesta = palabraOculta.toCharArray();
-        impresion = new char[descompuesta.length];
-        while (cont <= descompuesta.length - 1) {
-            impresion[cont] = '?';
-            cont++;
-        }
-         while (contOportunidades < 8){
-            contDeComparacionDigitada = 0;
-            falla=false;
-            algoPorCulpaDelProfe = JOptionPane.showInputDialog("Digite 1 digito que desea intentar");
-            if(algoPorCulpaDelProfe.length()==1){
-                digito=algoPorCulpaDelProfe.charAt(0);
-            }else{
-                if(algoPorCulpaDelProfe.equalsIgnoreCase(palabraOculta)){
-                    JOptionPane.showMessageDialog(null, "GANASTE!!!");
-                    System.exit(0);
-                }else{
-                    JOptionPane.showMessageDialog(null, "PERDISTE!");
-                    System.exit(0);
+        boolean jugarDeNuevo = true;
+        while (jugarDeNuevo) {
+            JuegoAhorcado juego = new JuegoAhorcado();
+            String mensaje = "Adivina la palabra letra por letra o escríbela completa.";
+
+            while (!juego.isTerminado()) {
+                String estado = mensaje
+                    + "\n\nPalabra: " + juego.getProgresoFormateado()
+                    + "\nIntentos restantes: " + juego.getIntentosRestantes() + " / " + JuegoAhorcado.MAX_FALLOS
+                    + "\nLetras usadas: " + (juego.getLetrasIntentadas().isEmpty() ? "(ninguna)" : juego.getLetrasIntentadas())
+                    + "\n\nDigita una letra o la palabra completa:";
+
+                String entrada = JOptionPane.showInputDialog(null, estado, "Ahorcado", JOptionPane.QUESTION_MESSAGE);
+                if (entrada == null) {
+                    return;
+                }
+
+                JuegoAhorcado.ResultadoIntento res = juego.intentar(entrada);
+                switch (res) {
+                    case ACIERTO:
+                        mensaje = "¡Bien! La letra está en la palabra.";
+                        break;
+                    case FALLO:
+                        mensaje = "No coincide. Sigue intentando.";
+                        break;
+                    case REPETIDA:
+                        mensaje = "Ya intentaste esa letra. No pierdes intentos.";
+                        break;
+                    case ENTRADA_INVALIDA:
+                        mensaje = "Ingresa una letra válida o una palabra sin dejar el campo vacío.";
+                        break;
+                    case GANO:
+                        JOptionPane.showMessageDialog(null, "¡GANASTE!\nLa palabra era: " + juego.getPalabraOculta(), "Ahorcado", JOptionPane.INFORMATION_MESSAGE);
+                        break;
+                    case PERDIO:
+                        JOptionPane.showMessageDialog(null, "Perdiste.\nLa palabra era: " + juego.getPalabraOculta(), "Ahorcado", JOptionPane.WARNING_MESSAGE);
+                        break;
                 }
             }
-            while (contDeComparacionDigitada < descompuesta.length) {
-                if (descompuesta[contDeComparacionDigitada]==digito) {
-                    impresion[contDeComparacionDigitada] = digito;
-                    falla = true;
-                }
-                contDeComparacionDigitada++;
-            }
-            if (!falla) {
-                contOportunidades++;
-            }
-            JOptionPane.showMessageDialog(null, String.valueOf(impresion));
-            JOptionPane.showMessageDialog(null, "Intetos fallidos:"+'\n'+contOportunidades);
-            if(palabraOculta.equals(String.valueOf(impresion))){
-               JOptionPane.showMessageDialog(null, "GANASTE!");
-               System.exit(0);
-            }
-        }
-        if(contOportunidades>=8){ 
-        JOptionPane.showMessageDialog(null, "Perdiste!!!");
+
+            int opcion = JOptionPane.showConfirmDialog(null, "¿Deseas jugar otra partida?", "Ahorcado", JOptionPane.YES_NO_OPTION);
+            jugarDeNuevo = (opcion == JOptionPane.YES_OPTION);
         }
     }
 }

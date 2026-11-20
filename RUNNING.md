@@ -10,7 +10,7 @@ Puedes abrir este repositorio en VS Code, Antigravity o Sublime Text. El compila
 En NetBeans 25, abre la carpeta que contiene `build.xml` como proyecto Ant. Selecciona un JDK igual o posterior al nivel de fuente del proyecto; las compilaciones de esta revisión usan JDK 24.0.2. El asistente busca NetBeans y el JDK y mantiene la configuración de usuario en `.local-build/`.
 
 ```powershell
-.uild-local.ps1
+..\build-local.ps1
 .\build-local.ps1 -Project 'Ahorcado/build.xml' -Target run
 ```
 
@@ -28,3 +28,10 @@ Inventario y compilaciones locales del 2026-11-15. Una compilación correcta no 
 
 `.gitignore` excluye credenciales locales, estado del editor y salidas de las herramientas detectadas. No deja de versionar archivos que ya estaban en Git. Los manifiestos, archivos de bloqueo, recursos fuente y scripts de esquema forman parte del código.
 <!-- local-development:end -->
+
+<!-- improvements-20261119:start -->
+## Mejoras y verificación funcional (2026-11-19)
+
+- **Mejoras aplicadas:** Extracción del motor `JuegoAhorcado` con validación de entradas vacías/cancelaciones/números, insensibilidad a mayúsculas, detección de letras repetidas sin doble penalización, interfaz unificada y opción de reiniciar partida.
+- **Pruebas ejecutadas:** Compilación NetBeans/Ant + `HangmanCheck` (22 aserciones aprobadas: victorias, derrotas, mayúsculas, letras repetidas y entradas inválidas).
+<!-- improvements-20261119:end -->
